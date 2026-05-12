@@ -1,0 +1,87 @@
+{
+  "_doc": [
+    "Hand-edited descriptions and in-game screenshots for the tower-room lookup UI.",
+    "Path keys reference files under renderer/public/tower-screenshots/. Missing keys",
+    "are fine — the UI falls back to atlas-rendered tiles only.",
+    "",
+    "Schema:",
+    "  rooms[<roomId>_<variant>]:",
+    "    displayName?  : human name shown next to the tile",
+    "    description?  : short blurb (1-2 sentences)",
+    "    screenshots[] : list of paths under tower-screenshots/, shown next to the",
+    "                    iso tile in the variant picker. Annotate them in-game",
+    "                    (circle the diagnostic feature) before saving.",
+    "  graves:",
+    "    default       : help text + optional screenshot shown for every grave step",
+    "    <roomId>_<variant>:  per-room overrides (e.g. an annotated open-vs-closed",
+    "                          screenshot specific to the room's slot layout)"
+  ],
+  "rooms": {
+    "109_0": { "displayName": "Dead end: Large & empty", "description": "", "screenshots": ["deadend-W-large.png"] },
+    "109_1": { "displayName": "Dead end: Small & empty", "description": "", "screenshots": ["deadend-W-small.png"] },
+    "110_0": { "displayName": "Dead end: Large & empty", "description": "", "screenshots": ["deadend-E-large.png"] },
+    "110_1": { "displayName": "Dead end: Small & empty", "description": "", "screenshots": ["deadend-E-small.png"] },
+    "112_0": { "displayName": "Dead end: Large & empty", "description": "", "screenshots": ["deadend-S-large.png"] },
+    "112_1": { "displayName": "Dead end: Small & empty", "description": "", "screenshots": ["deadend-S-small.png"] },
+    "116_0": { "displayName": "Dead end: Large & empty", "description": "", "screenshots": ["deadend-N-large.png"] },
+    "116_1": { "displayName": "Dead end: Small & empty", "description": "", "screenshots": ["deadend-N-small.png"] },
+
+    "124_0": { "displayName": "Dead end: Large with caskets",      "description": "", "screenshots": ["deadend-W-themed.png"] },
+    "125_0": { "displayName": "Dead end: Large with candle racks", "description": "", "screenshots": ["deadend-E-themed.png"] },
+    "127_0": { "displayName": "Dead end: Small with candle rack",  "description": "", "screenshots": ["deadend-S-themed.png"] },
+    "131_0": { "displayName": "Dead end: Large with braziers",     "description": "", "screenshots": ["deadend-N-themed.png"] },
+
+    "139_0": { "displayName": "Stairs up: top left",     "description": "", "screenshots": ["stairs-W.png"] },
+    "140_0": { "displayName": "Stairs up: bottom right", "description": "", "screenshots": ["stairs-E.png"] },
+    "141_0": { "displayName": "Stairs up: bottom left",  "description": "", "screenshots": ["stairs-S.png"] },
+    "142_0": { "displayName": "Stairs up: top right",    "description": "", "screenshots": ["stairs-N.png"] },
+
+    "143_0": { "displayName": "Stairs down: top left",     "description": "", "screenshots": ["stairs-down-W.png"] },
+    "144_0": { "displayName": "Stairs down: bottom right", "description": "", "screenshots": ["stairs-down-E.png"] },
+    "145_0": { "displayName": "Stairs down: bottom left",  "description": "", "screenshots": ["stairs-down-S.png"] },
+    "146_0": { "displayName": "Stairs down: top right",    "description": "", "screenshots": ["stairs-down-N.png"] },
+
+    "111_0": { "displayName": "Wide empty corridor",          "description": "", "screenshots": ["corridor-WE-wide.png"] },
+    "111_1": { "displayName": "Narrow empty corridor",        "description": "", "screenshots": ["corridor-WE-narrow.png"] },
+    "120_0": { "displayName": "Wide empty corridor",          "description": "", "screenshots": ["corridor-SN-wide.png"] },
+    "120_1": { "displayName": "Narrow empty corridor",        "description": "", "screenshots": ["corridor-SN-narrow.png"] },
+    "126_0": { "displayName": "Narrow corridor with torches", "description": "", "screenshots": ["corridor-WE-themed.png"] },
+    "135_0": { "displayName": "Wide corridor with a shrine",  "description": "", "screenshots": ["corridor-SN-themed.png"] },
+
+    "113_0": { "displayName": "Right corner, empty, door top",          "description": "", "screenshots": ["corner-SW-door-west.png"] },
+    "113_1": { "displayName": "Right corner, empty, door bottom",       "description": "", "screenshots": ["corner-SW-door-south.png"] },
+    "114_0": { "displayName": "Top corner, empty, door right",          "description": "", "screenshots": ["corner-SE-door-east.png"] },
+    "114_1": { "displayName": "Top corner, empty, door left",           "description": "", "screenshots": ["corner-SE-door-south.png"] },
+    "117_0": { "displayName": "Bottom corner, empty, door top",         "description": "", "screenshots": ["corner-NW-door-north.png"] },
+    "117_1": { "displayName": "Bottom corner, empty, door bottom",      "description": "", "screenshots": ["corner-NW-door-west.png"] },
+    "118_0": { "displayName": "Left corner, empty, door top",           "description": "", "screenshots": ["corner-NE-door-north.png"] },
+    "118_1": { "displayName": "Left corner, empty, door bottom",        "description": "", "screenshots": ["corner-NE-door-east.png"] },
+    "128_0": { "displayName": "Right corner, clickable graves",         "description": "", "screenshots": ["corner-SW-themed.png"] },
+    "129_0": { "displayName": "Top corner with armor and weapon racks", "description": "", "screenshots": ["corner-SE-themed.png"] },
+    "132_0": { "displayName": "Bottom corner, dead rogue on fire",      "description": "", "screenshots": ["corner-NW-themed.png"] },
+    "133_0": { "displayName": "Left corner, weapon rack",               "description": "", "screenshots": ["corner-NE-themed.png"] },
+
+    "115_0": { "displayName": "Top right intersection, doors top left/bottom right",    "description": "", "screenshots": ["intersect-WSE-doors-west-east.png"] },
+    "115_1": { "displayName": "Top right intersection, door top right",                 "description": "", "screenshots": ["intersect-WSE-door-south.png"] },
+    "119_0": { "displayName": "Bottom left intersection, doors top left/bottom right",  "description": "", "screenshots": ["intersect-WNE-doors-west-east.png"] },
+    "119_1": { "displayName": "Bottom left intersection, door top right",               "description": "", "screenshots": ["intersect-WNE-door-north.png"] },
+    "121_0": { "displayName": "Bottom right intersection, door top left",               "description": "", "screenshots": ["intersect-SWN-door-west.png"] },
+    "121_1": { "displayName": "Bottom right intersection, doors bottom left/top right", "description": "", "screenshots": ["intersect-SWN-doors-south-north.png"] },
+    "122_0": { "displayName": "Top left intersection, door bottom right",               "description": "", "screenshots": ["intersect-NES-door-east.png"] },
+    "122_1": { "displayName": "Top left intersection, doors bottom left/top right",     "description": "", "screenshots": ["intersect-NES-doors-north-south.png"] },
+    "130_0": { "displayName": "Top right intersection, fire pentagram",                 "description": "", "screenshots": ["intersect-WSE-themed.png"] },
+    "134_0": { "displayName": "Bottom left intersection, two dead rogues",              "description": "", "screenshots": ["intersect-WNE-themed.png"] },
+    "136_0": { "displayName": "Bottom right intersection, candle racks",                "description": "", "screenshots": ["intersect-SWN-themed.png"] },
+    "137_0": { "displayName": "Top left intersection, braziers",                        "description": "", "screenshots": ["intersect-NES-themed.png"] },
+
+    "123_0": { "displayName": "4-way intersection, doors top left/bottom right", "description": "", "screenshots": ["intersect-NSWE.png"] },
+    "123_1": { "displayName": "4-way intersection, doors bottom left/top right", "description": "", "screenshots": ["intersect-NSWE-doors-south-north.png"] }
+  },
+  "graves": {
+    "default": {
+      "title": "Which graves are open?",
+      "intro": "Mark each grave that is OPEN (a dark pit in the floor) in your map. Leave closed graves unmarked.",
+      "screenshot": ""
+    }
+  }
+}

@@ -1,0 +1,955 @@
+:root {
+  color-scheme: dark;
+  --bg: #0e0f12;
+  --panel: #16181d;
+  --panel-2: #1d2027;
+  --border: #262a33;
+  --text: #d6d8de;
+  --text-dim: #8b8f99;
+  --accent: #6aa6ff;
+  --accent-dim: #3a5d99;
+  --warn: #ffd66b;
+  --danger: #e25555;
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Inter, sans-serif;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text); }
+button, select, input { font: inherit; color: inherit; }
+
+#app {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  height: 100vh;
+  width: 100vw;
+}
+
+aside#sidebar {
+  background: var(--panel);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+#sidebar header {
+  padding: 14px 16px 10px;
+  border-bottom: 1px solid var(--border);
+}
+#sidebar h1 {
+  font-size: 14px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin: 0 0 4px;
+}
+#sidebar h2 {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin: 0 0 8px;
+}
+#sidebar .subtitle {
+  font-size: 12px;
+  color: var(--text-dim);
+  line-height: 1.4;
+}
+#sidebar section {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+button.btn {
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+button.btn:hover:not(:disabled) { border-color: var(--accent-dim); }
+button.btn:disabled { opacity: 0.5; cursor: default; }
+button.btn.primary { background: var(--accent-dim); color: #fff; border-color: var(--accent); }
+/* Find seeds in the 100–200 band: still clickable, but the label notes
+   that an extra question (Countess direction) gets asked first. */
+button.btn.primary.requires-l5 { background: var(--warn-dim, #6a4c1a); border-color: var(--warn, #d9a04a); }
+button.btn.danger { color: var(--danger); border-color: #4a2a2a; }
+
+.seq-chips {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.seq-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 2px 8px;
+  font-size: 11px;
+  font-family: ui-monospace, "JetBrains Mono", Consolas, monospace;
+  color: var(--text);
+}
+.seq-chip .idx { color: var(--text-dim); font-size: 10px; }
+.seq-empty { color: var(--text-dim); font-size: 12px; }
+button.seq-chip-btn {
+  cursor: pointer;
+  font: inherit;
+}
+button.seq-chip-btn:hover { border-color: var(--accent); opacity: 1 !important; }
+
+.count-card {
+  margin-top: 10px;
+  padding: 10px 12px;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+.count-card .big {
+  font-size: 22px;
+  font-family: ui-monospace, "JetBrains Mono", Consolas, monospace;
+  color: var(--text);
+}
+.count-card .label {
+  font-size: 11px;
+  color: var(--text-dim);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.count-card.pending .big { color: var(--text-dim); }
+.count-card.narrow .big { color: var(--warn); }
+
+.sample-seeds {
+  margin-top: 10px;
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 11px;
+  color: var(--text-dim);
+  max-height: 140px;
+  overflow-y: auto;
+}
+.sample-seeds .head { color: var(--text); margin-bottom: 4px; }
+.sample-seeds .seed-row { padding: 1px 0; }
+.sample-seeds .seed-row a { color: var(--accent); text-decoration: none; }
+.sample-seeds .seed-row a:hover { text-decoration: underline; }
+
+#dev-section .dbg-hex {
+  font-family: ui-monospace, "JetBrains Mono", Consolas, monospace;
+  font-size: 11px;
+  color: var(--warn);
+  background: #0c0d10;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 6px 8px;
+  word-break: break-all;
+  cursor: text;
+  user-select: all;
+}
+#dev-section .dbg-decode {
+  list-style: none;
+  padding: 0;
+  margin: 6px 0 0;
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 11px;
+  color: var(--text-dim);
+  max-height: 220px;
+  overflow-y: auto;
+}
+#dev-section .dbg-decode li {
+  padding: 1px 0;
+  color: var(--text);
+}
+
+/* ---- Iso grid area ----------------------------------------------------- */
+main#grid-host {
+  position: relative;
+  overflow: hidden;
+  background: #07080a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: none;
+  cursor: grab;
+}
+main#grid-host.dragging { cursor: grabbing; }
+.iso-grid {
+  position: relative;
+  background: #07080a;
+  transform-origin: 0 0;
+  will-change: transform;
+}
+.iso-cell {
+  position: absolute;
+  /* Diamond clip-path so adjacent cells share edges and clicks land on the
+     correct cell (the rectangular bounding boxes of adjacent diamonds
+     overlap, but their diamond regions don't). */
+  clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+  cursor: pointer;
+  background: #14161a;
+}
+.iso-cell.empty:hover { background: #1c2030; }
+.iso-cell.next { background: #1a2030; }
+.iso-cell.disabled {
+  background: #0c0d10;
+  cursor: not-allowed;
+  pointer-events: none;
+  opacity: 0.4;
+}
+.iso-cell.placed { background: transparent; }
+.iso-cell .room-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  /* The grid container has `transform: scale(...)` and at 2× the browser
+     would otherwise bilinear-blur each cell. `pixelated` (and crisp-edges
+     as a Firefox fallback) makes the CSS scale nearest-neighbor, which
+     keeps the supersampled cell canvas sharp. */
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+.iso-cell .next-label {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 10px;
+  color: var(--accent);
+  font-family: ui-monospace, Consolas, monospace;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+.iso-cell .seq-idx {
+  position: absolute;
+  top: 35%;
+  left: 50%;
+  transform: translate(-50%, 0);
+  font-size: 11px;
+  font-weight: bold;
+  color: var(--warn);
+  font-family: ui-monospace, Consolas, monospace;
+  pointer-events: none;
+  text-shadow: 0 0 4px rgba(0,0,0,0.85);
+}
+
+/* Compass widget overlaid on the grid for orientation. */
+.iso-compass {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  font-size: 11px;
+  color: var(--text-dim);
+  text-align: center;
+  pointer-events: none;
+  font-family: ui-monospace, Consolas, monospace;
+  letter-spacing: 0.08em;
+}
+.iso-compass .dia { width: 80px; height: 80px; position: relative; margin: 4px auto 0; }
+.iso-compass .dia span {
+  position: absolute;
+  font-size: 11px;
+  color: var(--text-dim);
+}
+.iso-compass .dia .n { top: -2px; left: 50%; transform: translateX(-50%); }
+.iso-compass .dia .e { right: -2px; top: 50%; transform: translateY(-50%); }
+.iso-compass .dia .s { bottom: -2px; left: 50%; transform: translateX(-50%); }
+.iso-compass .dia .w { left: -2px; top: 50%; transform: translateY(-50%); }
+
+/* ---- Modal --------------------------------------------------------- */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 30;
+}
+.modal-backdrop.open { display: flex; }
+.modal {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  width: min(1280px, 95vw);
+  max-height: 92vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 8px 28px rgba(0,0,0,0.65);
+}
+.modal header {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.modal header h2 {
+  margin: 0;
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+.modal-close {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-dim);
+  font-size: 18px;
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.modal-close:hover { color: var(--text); border-color: var(--border); }
+.modal .body {
+  padding: 14px 16px;
+  overflow-y: auto;
+  flex: 1;
+}
+.modal footer {
+  padding: 10px 16px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  gap: 8px;
+  justify-content: space-between;
+  align-items: center;
+}
+.modal .steps {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  font-size: 12px;
+  color: var(--text-dim);
+}
+.modal .steps .step {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 4px;
+  user-select: none;
+}
+.modal .steps .step:hover { background: var(--panel-2); }
+.modal .steps .step.disabled {
+  cursor: default;
+  opacity: 0.55;
+}
+.modal .steps .step.disabled:hover { background: transparent; }
+.modal .steps .num {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--panel-2);
+  color: var(--text-dim);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-family: ui-monospace, Consolas, monospace;
+}
+.modal .steps .step.active .num { background: var(--accent); color: #06080c; }
+.modal .steps .step.done .num { background: var(--accent-dim); color: #fff; }
+.modal .steps .arrow { color: var(--border); }
+
+/* Tile grid inside the modal (shape, variant pickers). */
+.tile-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+}
+.tile-grid.variant-grid {
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+}
+.variant-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.variant-head > * { flex-shrink: 0; }
+.variant-head .shot {
+  width: 140px;
+  height: 140px;
+  min-width: 140px;
+  min-height: 140px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  background: #0c0d10;
+  position: relative;        /* anchor for the hover popover */
+  overflow: visible;
+}
+.shot-zoom {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.65);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 4px;
+  cursor: zoom-in;
+  user-select: none;
+}
+.shot-zoom svg { display: block; }
+.shot-zoom:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #06080c;
+}
+.shot-thumb-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
+}
+.shot-popover {
+  /* Center on the viewport, not anchored to the thumb. With max-width 70vw
+     it would frequently overflow ancestors with `overflow: auto/hidden`,
+     and chasing those was getting fragile. Fixed positioning sidesteps it. */
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 200;
+  background: var(--panel);
+  border: 1px solid var(--accent);
+  padding: 4px;
+  border-radius: 4px;
+  box-shadow: 0 8px 28px rgba(0,0,0,0.65);
+  pointer-events: none;
+}
+.shot-popover[hidden] { display: none; }
+.shot-popover img {
+  display: block;
+  /* ~30% larger per axis than the previous 640×420 cap, but never wider/
+     taller than 70 % of the viewport. */
+  max-width: min(860px, 70vw);
+  max-height: min(560px, 70vh);
+  object-fit: contain;
+  background: #0c0d10;
+}
+.variant-head .shot-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 10px;
+  color: var(--text-dim);
+  padding: 6px;
+}
+.tile .blurb {
+  font-size: 11px;
+  color: var(--text-dim);
+  text-align: center;
+  line-height: 1.35;
+  margin-top: 2px;
+}
+.shot-large {
+  width: 560px;
+  height: 260px;
+  object-fit: contain;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  background: #0c0d10;
+}
+.shot-large.shot-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-dim);
+  padding: 14px;
+}
+
+/* Categorized room picker. */
+.category-block { margin-bottom: 28px; }
+.category-block:last-child { margin-bottom: 0; }
+.category-head {
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--text);
+  margin: 8px 0 14px;
+  padding: 6px 10px 8px;
+  border-bottom: 2px solid var(--accent-dim);
+  background: linear-gradient(to bottom, rgba(106, 166, 255, 0.08), transparent);
+  border-radius: 4px 4px 0 0;
+}
+.loading-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(7, 8, 10, 0.85);
+  color: var(--text-dim);
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 5;
+}
+
+/* ---- Phase overlay (everything that's NOT the L4 build view) -------- */
+.phase-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--bg);
+  z-index: 50;
+  overflow: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+}
+.phase-overlay[hidden] { display: none; }
+
+.question-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 28px 32px;
+  width: min(1100px, 95vw);
+  text-align: center;
+  box-shadow: 0 8px 28px rgba(0,0,0,0.5);
+  position: relative;
+}
+/* Back-to-previous-step buttons live in the bottom-left corner of the
+   dialog so they never get tangled up with the primary action (Skip,
+   Edit, direction picks) in the centered actions row. */
+.question-card .btn.back-corner {
+  position: absolute;
+  left: 18px;
+  bottom: 18px;
+  margin: 0;
+}
+/* Dialog × close, top-right. Rendered only for the extras / pipeline
+   dialogs — the initial first-time-through walk-through never gets one,
+   the user has to complete it. */
+.question-card .extras-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  font-size: 22px;
+  line-height: 1;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  color: var(--text-dim);
+  cursor: pointer;
+}
+.question-card .extras-close:hover {
+  color: var(--text);
+  border-color: var(--border);
+}
+.question-card.results-card { width: min(560px, 100%); }
+.tile-grid.stairs-grid {
+  /* Always at most 2 tiles per row — auto-fill at the regular variant-grid
+     density wraps awkwardly with only 4 stairs orientations. */
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  max-width: 900px;
+  margin: 0 auto;
+}
+.stairs-grid .label .dir-arrow {
+  color: var(--accent);
+  font-size: 18px;
+  margin-right: 4px;
+}
+/* Read-only mode: dim non-selected tiles, kill their hover affordance.
+   Used when revisiting stairs4 — its answer is locked because it seeds the
+   L4 grid. The selected tile keeps full color so the player still sees
+   what they picked. */
+.tile-grid.readonly .tile.disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  filter: grayscale(0.4);
+}
+.tile-grid.readonly .tile.disabled:hover {
+  border-color: var(--border);
+  background: var(--panel-2);
+}
+.question-card h2 {
+  margin: 0 0 12px;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--text);
+}
+.question-card .question-step {
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 4px;
+}
+.question-prompt {
+  font-size: 15px;
+  color: var(--text);
+  line-height: 1.5;
+  margin: 0 0 20px;
+}
+.question-prompt .question-sub {
+  font-size: 13px;
+  color: var(--text-dim);
+}
+.question-actions { margin-top: 20px; }
+
+/* Flanking arrow buttons for question navigation. The arrows sit to the left
+   and right of the selection grid so they stay in a fixed visual position
+   no matter which tiles are below them. */
+.nav-flank {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  justify-content: center;
+}
+.nav-flank > #opts-host {
+  flex: 1;
+  min-width: 0;
+}
+.nav-arrow {
+  flex-shrink: 0;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-size: 32px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  font-family: inherit;
+  transition: border-color 120ms, color 120ms, background 120ms;
+}
+.nav-arrow:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--panel);
+}
+.nav-arrow:disabled {
+  opacity: 0.22;
+  cursor: not-allowed;
+}
+
+.dir-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  max-width: 460px;
+  margin: 0 auto;
+}
+.dir-btn {
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  padding: 18px 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  font: inherit;
+  font-size: 15px;
+  transition: border-color 80ms ease, background 80ms ease;
+}
+.dir-btn:hover { border-color: var(--accent); background: #1a2233; }
+.dir-btn .dir-arrow {
+  font-size: 56px;
+  line-height: 1;
+  color: var(--accent);
+  width: 64px;
+  text-align: center;
+}
+.dir-btn .dir-label { flex: 1; text-align: left; font-size: 16px; }
+
+/* Filtering progress */
+.filter-progress {
+  margin-top: 20px;
+}
+.filter-bar {
+  height: 12px;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.filter-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-dim), var(--accent));
+  transition: width 100ms linear;
+}
+.filter-count {
+  margin-top: 6px;
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 11px;
+  color: var(--text-dim);
+}
+
+/* Results list */
+.seed-link-list {
+  list-style: none;
+  padding: 0;
+  margin: 16px 0;
+  max-height: 360px;
+  overflow-y: auto;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--panel-2);
+}
+.seed-link-list li {
+  padding: 6px 12px;
+  border-bottom: 1px solid var(--border);
+  font-family: ui-monospace, Consolas, monospace;
+  text-align: left;
+}
+.seed-link-list li:last-child { border-bottom: none; }
+.seed-link-list a {
+  color: var(--accent);
+  text-decoration: none;
+}
+.seed-link-list a:hover { text-decoration: underline; }
+
+.results-warning {
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--warn);
+}
+.tile {
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+}
+.tile:hover { border-color: var(--accent-dim); }
+.tile.selected { border-color: var(--accent); background: #1a2233; }
+.tile .label {
+  font-size: 12px;
+  color: var(--text);
+  text-align: center;
+  line-height: 1.2;
+}
+.tile .arrows {
+  font-size: 28px;
+  line-height: 1;
+  color: var(--accent);
+  letter-spacing: 0.10em;
+  font-family: ui-monospace, Consolas, monospace;
+}
+.tile .label .shape-arrows {
+  font-size: 22px;
+  color: var(--accent);
+  letter-spacing: 0.10em;
+  font-family: ui-monospace, Consolas, monospace;
+  margin-right: 6px;
+}
+.tile .sublabel {
+  font-size: 10px;
+  color: var(--text-dim);
+  text-align: center;
+}
+
+.picker-intro {
+  font-size: 12px;
+  color: var(--text-dim);
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.graves-stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.graves-stage .room-wrap {
+  position: relative;
+  display: inline-block;
+}
+.graves-stage .slot-hit {
+  position: absolute;
+  cursor: pointer;
+  /* clip-path set inline per-slot */
+}
+.graves-stage .slot-hit:hover { background: rgba(106,166,255,0.20); }
+.graves-stage .slot-hit.unknown:hover { background: rgba(255, 80, 80, 0.25); }
+
+/* Cap warning shown above the grave picker stage. Flashes red when the
+   user tries to leave while still over the global unknown cap. */
+.graves-cap-warning {
+  margin: 6px 0 12px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  background: var(--panel-2);
+  color: var(--text-dim);
+  font-size: 13px;
+  border: 1px solid var(--border);
+  text-align: center;
+}
+.graves-cap-warning b { color: var(--text); }
+.graves-cap-warning.over {
+  background: rgba(226, 85, 85, 0.12);
+  border-color: var(--danger);
+  color: var(--text);
+}
+.graves-cap-warning.over b { color: var(--danger); }
+.graves-cap-warning.flash {
+  animation: graves-cap-flash 320ms ease-out;
+}
+@keyframes graves-cap-flash {
+  0%   { box-shadow: 0 0 0 0 var(--danger); }
+  50%  { box-shadow: 0 0 0 6px rgba(226, 85, 85, 0.35); }
+  100% { box-shadow: 0 0 0 0 rgba(226, 85, 85, 0); }
+}
+.no-graves {
+  text-align: center;
+  color: var(--text-dim);
+  font-size: 13px;
+  padding: 20px 0;
+}
+
+/* --- Mobile: hamburger + slide-in sidebar ----------------------------- */
+/* Same shape as the main map viewer's chrome — these three elements live
+   in the DOM at all sizes and are display:none on desktop; the media
+   query at the bottom flips them on and turns the sidebar into a fixed
+   overlay above the grid + phase overlays. */
+#sidebar-toggle {
+  display: none;
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 60;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  background: rgba(22, 24, 29, 0.92);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  align-items: center;
+  justify-content: center;
+  color: var(--text);
+  cursor: pointer;
+}
+#sidebar-toggle .hamburger,
+#sidebar-toggle .hamburger::before,
+#sidebar-toggle .hamburger::after {
+  display: block;
+  width: 20px;
+  height: 2px;
+  background: var(--text);
+  border-radius: 1px;
+}
+#sidebar-toggle .hamburger {
+  position: relative;
+}
+#sidebar-toggle .hamburger::before,
+#sidebar-toggle .hamburger::after {
+  content: "";
+  position: absolute;
+  left: 0;
+}
+#sidebar-toggle .hamburger::before { top: -6px; }
+#sidebar-toggle .hamburger::after  { top:  6px; }
+
+#sidebar-close {
+  display: none;
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  font-size: 24px;
+  line-height: 1;
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-dim);
+  border-radius: 4px;
+  cursor: pointer;
+}
+#sidebar-close:hover { color: var(--text); border-color: var(--border); }
+
+#sidebar-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 55;
+}
+#sidebar-backdrop[hidden] { display: none; }
+
+@media (max-width: 720px) {
+  #app {
+    grid-template-columns: 1fr;
+  }
+  #sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: min(86vw, 360px);
+    height: 100dvh;
+    z-index: 70;
+    transform: translateX(-100%);
+    transition: transform 180ms ease-out;
+    box-shadow: 4px 0 16px rgba(0, 0, 0, 0.55);
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+  }
+  #sidebar.open { transform: translateX(0); }
+  #sidebar-toggle { display: inline-flex; }
+  #sidebar-close { display: inline-flex; align-items: center; justify-content: center; }
+  /* Header sticks so the close button is always reachable. */
+  #sidebar header {
+    position: sticky;
+    top: 0;
+    background: var(--panel);
+    z-index: 5;
+    padding-right: 48px;
+  }
+  /* Drop the section borders so it feels less crammed. */
+  #sidebar section { padding: 12px 14px; }
+  /* Tap targets — bump btn / dir-btn / picker tiles so they're finger-friendly. */
+  button.btn { padding: 10px 14px; min-height: 40px; }
+  .dir-btn { padding: 16px 12px; min-height: 64px; font-size: 16px; }
+  .question-card {
+    padding: 20px 16px;
+    width: min(560px, 100%);
+  }
+  .question-card h2 { font-size: 18px; }
+  .question-prompt { font-size: 14px; }
+  /* The L4 picker modal already uses min(1280px, 95vw); keep that but
+     loosen the inner grids so single-column collapse works gracefully. */
+  .tile-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 8px; }
+  .tile-grid.variant-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+  .tile-grid.stairs-grid  { grid-template-columns: 1fr; max-width: 100%; }
+  .variant-head .shot { width: 100px; height: 100px; }
+  .shot-large { width: 100%; height: auto; aspect-ratio: 2 / 1; }
+  /* Iso compass is small chrome — get out of the way on phones. */
+  .iso-compass { display: none; }
+  /* Tighten flanking arrows so they don't crowd the tiles on phones. */
+  .nav-flank { gap: 8px; }
+  .nav-arrow { width: 44px; height: 44px; font-size: 26px; }
+}

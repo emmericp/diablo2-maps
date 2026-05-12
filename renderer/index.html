@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>D2 Seed Map Viewer</title>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <div id="app">
+      <button id="sidebar-toggle" type="button" aria-label="Open menu" aria-controls="sidebar" aria-expanded="false">
+        <span class="hamburger"></span>
+      </button>
+      <div id="sidebar-backdrop" hidden></div>
+      <aside id="sidebar">
+        <header>
+          <button id="sidebar-close" type="button" aria-label="Close menu">×</button>
+          <h1>D2 Seed Viewer</h1>
+          <div class="seed-info">
+            <span id="seed-label">no seed loaded</span>
+          </div>
+        </header>
+
+        <section class="controls">
+          <div class="row">
+            <input id="seed-input" type="text" inputmode="numeric"
+                   placeholder="seed (e.g. 1234567)" />
+            <button id="seed-load-btn" type="button">Load</button>
+            <button id="seed-random-btn" type="button" title="Load a random seed">Random</button>
+          </div>
+          <div class="row dev-only">
+            <input id="file-input" type="file" accept=".json" hidden />
+            <button id="open-btn" type="button">Open .json</button>
+          </div>
+          <div class="row dev-only">
+            <select id="seed-select" disabled>
+              <option>(dev mode only — start `vite` to list seedgen/out)</option>
+            </select>
+          </div>
+          <div class="row toggles">
+            <label><input type="checkbox" id="iso-toggle" checked /> Iso</label>
+            <label><input type="checkbox" id="adjacents-toggle" /> Adjacents</label>
+            <label><input type="checkbox" id="rooms-toggle" checked /> Rooms</label>
+            <label><input type="checkbox" id="labels-toggle" checked /> Labels</label>
+            <label class="dev-only"><input type="checkbox" id="tells-toggle" /> Tells</label>
+          </div>
+          <div class="row">
+            <button id="reset-view-btn" type="button">Reset view (R)</button>
+          </div>
+        </section>
+
+        <section class="legend" id="legend">
+          <!-- populated by ui.ts -->
+        </section>
+
+        <section class="levels">
+          <h2>Levels</h2>
+          <div id="components-list"></div>
+        </section>
+
+        <section class="inspector" id="inspector">
+          <h2>Inspector</h2>
+          <div id="inspector-body" class="empty">click a preset on the map…</div>
+        </section>
+      </aside>
+
+      <main id="canvas-host">
+        <canvas id="map"></canvas>
+        <div id="tooltip"></div>
+        <div id="loading-overlay" hidden>
+          <div class="spinner"></div>
+          <div id="loading-msg" class="loading-msg">loading…</div>
+        </div>
+        <div id="statusbar">
+          <span id="sb-coord"></span>
+          <span class="sep">·</span>
+          <span id="sb-tile"></span>
+          <span class="sep">·</span>
+          <span id="sb-coll"></span>
+          <span class="sep">·</span>
+          <span id="sb-zoom"></span>
+          <span class="sb-message" id="sb-message">drag a seed_*.json onto the map</span>
+        </div>
+      </main>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

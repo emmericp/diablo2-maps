@@ -1,0 +1,16 @@
+{
+  "name": "d2-seed-renderer",
+  "private": true,
+  "version": "0.0.1",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@types/node": "^25.7.0",
+    "typescript": "^5.6.2",
+    "vite": "^5.4.10"
+  }
+}

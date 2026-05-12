@@ -1,0 +1,31 @@
+# Whitelist mode: exclude everything, then re-include only what the
+# Dockerfile actually COPYs. When the build starts needing more inputs,
+# add them here — don't fall back to blacklisting.
+
+**
+
+# Stage 1 — Go mapserver.
+!mapserver/
+!mapserver/go.mod
+!mapserver/*.go
+!mapserver/cmd/
+!mapserver/cmd/**
+
+# Stage 2 — Vite renderer sources.
+!renderer/
+!renderer/package.json
+!renderer/package-lock.json
+!renderer/index.html
+!renderer/vite.config.ts
+!renderer/tsconfig*.json
+!renderer/src/
+!renderer/src/**
+
+# Stage 3 — prebuilt Windows mapdump.exe (built on Windows, not in Docker).
+!seedgen/
+!seedgen/build/
+!seedgen/build/Release/
+!seedgen/build/Release/mapdump.exe
+
+# Container entrypoint.
+!docker-entrypoint.sh

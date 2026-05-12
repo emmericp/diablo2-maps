@@ -1,0 +1,20 @@
+.claude/
+CLAUDE.md
+__pycache__
+seedgen/out/
+*.csv
+*.txt
+*.bin
+*.d2s
+build
+*.exe
+*.log
+*.seeds
+*.idx
+*.tsbuildinfo
+*.tbl
+room_renders
+
+# Server-generated cropped + thumbnail screenshots (mapserver writes these
+# alongside the originals on first request).
+renderer/public/tower-screenshots/.cache/

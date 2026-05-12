@@ -1,0 +1,523 @@
+:root {
+  color-scheme: dark;
+  --bg: #0e0f12;
+  --panel: #16181d;
+  --panel-2: #1d2027;
+  --border: #262a33;
+  --text: #d6d8de;
+  --text-dim: #8b8f99;
+  --accent: #6aa6ff;
+  --accent-dim: #3a5d99;
+  --danger: #e25555;
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Inter, sans-serif;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text); overflow: hidden; }
+button, select, input { font: inherit; color: inherit; }
+
+#app {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  height: 100vh;
+  width: 100vw;
+}
+
+#sidebar {
+  background: var(--panel);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0;
+}
+#sidebar header {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+}
+#sidebar h1 {
+  font-size: 14px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin: 0 0 4px;
+}
+.seed-info { font-size: 13px; color: var(--text); }
+#seed-label { font-family: ui-monospace, "JetBrains Mono", Consolas, monospace; }
+
+#sidebar h2 {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin: 0 0 6px;
+}
+#sidebar section {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+}
+#sidebar section.levels { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+.controls .row {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  margin-bottom: 6px;
+}
+.controls .row:last-child { margin-bottom: 0; }
+.controls .row.toggles {
+  flex-wrap: wrap;
+  font-size: 12px;
+  color: var(--text-dim);
+}
+.controls .row.toggles label {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-right: 6px;
+}
+button {
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+button:hover:not(:disabled) { border-color: var(--accent-dim); }
+button:disabled { opacity: 0.5; cursor: default; }
+select {
+  flex: 1;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 4px 6px;
+  min-width: 0;
+}
+#seed-input { flex: 1; min-width: 0; }
+
+/* --- Legend (with checkbox toggles) ----------------------------------- */
+.legend-group { margin-bottom: 6px; }
+.legend-group:last-child { margin-bottom: 0; }
+.legend-group .group-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin: 0 0 4px;
+}
+.legend-group .group-head button {
+  font-size: 10px;
+  padding: 1px 6px;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+}
+.legend-group ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px 8px;
+  font-size: 12px;
+}
+.legend-group li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 0;
+  color: var(--text);
+  cursor: pointer;
+  user-select: none;
+}
+.legend-group li:hover { color: #fff; }
+.legend-group li.off { color: var(--text-dim); opacity: 0.55; }
+.legend-group li input { margin: 0; }
+.legend-group .swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  flex-shrink: 0;
+  border: 1px solid rgba(255,255,255,0.12);
+}
+
+/* --- Levels grouped by component -------------------------------------- */
+#components-list {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+  font-size: 12px;
+}
+/* Hierarchy: act → logical group → unit row → level list */
+.act {
+  margin-bottom: 4px;
+  border-radius: 4px;
+}
+.act-header {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 6px;
+  border-radius: 3px;
+  color: var(--text);
+  user-select: none;
+}
+.act-header:hover { background: var(--panel-2); }
+.act-title {
+  flex: 1;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+.act-body {
+  padding: 2px 0 4px 6px;
+  border-left: 1px solid var(--border);
+  margin-left: 8px;
+}
+.act.collapsed .act-body { display: none; }
+
+.comp-count {
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 10px;
+  color: var(--text-dim);
+  background: rgba(0, 0, 0, 0.25);
+  padding: 0 5px;
+  border-radius: 8px;
+}
+.twirl {
+  width: 9px;
+  display: inline-block;
+  text-align: center;
+  font-size: 9px;
+  color: var(--text-dim);
+  transform: rotate(90deg);
+  transition: transform 80ms ease-out;
+}
+.act.collapsed .act-header > .twirl { transform: rotate(0deg); }
+
+/* Render unit — every leaf in the sidebar uses this row, so they look
+   identical regardless of how many floors the unit contains. */
+.unit { margin: 1px 0; }
+.unit-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 6px;
+  border-radius: 3px;
+  cursor: pointer;
+  color: var(--text);
+  user-select: none;
+}
+.unit-row:hover { background: var(--panel-2); }
+.unit.active > .unit-row {
+  background: var(--accent-dim);
+  color: #fff;
+}
+.unit-label { flex: 1; }
+.unit-meta {
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 10px;
+  color: var(--text-dim);
+}
+.unit.active > .unit-row .unit-meta { color: rgba(255, 255, 255, 0.85); }
+
+/* Floor list inside a multi-level unit — only shown when that unit is
+   active, so the sidebar otherwise stays a flat list of unit rows. */
+.unit-floors {
+  list-style: none;
+  padding: 1px 0 2px 14px;
+  margin: 2px 0;
+  font-size: 11px;
+  border-left: 1px dashed var(--border);
+  margin-left: 8px;
+  display: none;
+}
+.unit.active > .unit-floors { display: block; }
+.floor-row {
+  padding: 2px 6px;
+  border-radius: 3px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  gap: 6px;
+  color: var(--text-dim);
+}
+.floor-row:hover { background: var(--panel-2); color: var(--text); }
+.floor-row.active { background: var(--accent-dim); color: #fff; }
+.floor-row .lvlno {
+  color: var(--text-dim);
+  font-family: ui-monospace, Consolas, monospace;
+}
+.floor-row.active .lvlno { color: rgba(255, 255, 255, 0.85); }
+
+.inspector { max-height: 220px; overflow: auto; }
+#inspector-body {
+  font-size: 12px;
+  font-family: ui-monospace, Consolas, monospace;
+  white-space: pre-wrap;
+  color: var(--text);
+}
+#inspector-body.empty { color: var(--text-dim); font-family: inherit; }
+
+/* --- Canvas + status bar ---------------------------------------------- */
+#canvas-host {
+  position: relative;
+  overflow: hidden;
+  background: #07080a;
+  display: flex;
+  flex-direction: column;
+}
+#map {
+  flex: 1;
+  min-height: 0;
+  display: block;
+  cursor: grab;
+  /* Without this the browser eats single-finger drags as page scroll/swipe
+     and two-finger pinches as page zoom — neither of which we want, since
+     the canvas implements its own pan/pinch via pointer events. */
+  touch-action: none;
+}
+#map.dragging { cursor: grabbing; }
+
+#statusbar {
+  flex-shrink: 0;
+  background: var(--panel);
+  border-top: 1px solid var(--border);
+  padding: 4px 10px;
+  font-family: ui-monospace, "JetBrains Mono", Consolas, monospace;
+  font-size: 11px;
+  color: var(--text-dim);
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  white-space: nowrap;
+  overflow: hidden;
+}
+#statusbar .sep { color: var(--border); }
+#statusbar #sb-coll, #statusbar #sb-tile, #statusbar #sb-coord, #statusbar #sb-zoom { color: var(--text); }
+#statusbar .sb-message {
+  margin-left: auto;
+  color: var(--text-dim);
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-size: 11px;
+}
+
+/* --- Loading overlay -------------------------------------------------- */
+#loading-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: rgba(7, 8, 10, 0.55);
+  backdrop-filter: blur(1px);
+  z-index: 8;
+}
+#loading-overlay[hidden] { display: none; }
+#loading-overlay .spinner {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 3px solid var(--border);
+  border-top-color: var(--accent);
+  animation: spin 0.8s linear infinite;
+}
+#loading-overlay .loading-msg {
+  color: var(--text);
+  font-size: 12px;
+  font-family: ui-monospace, "JetBrains Mono", Consolas, monospace;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* --- Tooltip ---------------------------------------------------------- */
+.drop-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border: 2px dashed var(--accent);
+  background: rgba(106,166,255,0.08);
+  display: none;
+}
+.drop-overlay.show { display: block; }
+
+#tooltip {
+  position: absolute;
+  pointer-events: none;
+  background: rgba(12, 14, 18, 0.95);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 6px 8px;
+  font-family: ui-monospace, "JetBrains Mono", Consolas, monospace;
+  font-size: 11px;
+  color: var(--text);
+  max-width: 320px;
+  white-space: pre;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  z-index: 10;
+  display: none;
+  line-height: 1.45;
+}
+#tooltip.show { display: block; }
+#tooltip .tt-title {
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 3px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+#tooltip .tt-swatch {
+  width: 9px;
+  height: 9px;
+  border-radius: 2px;
+  display: inline-block;
+}
+#tooltip .tt-row { color: var(--text-dim); }
+#tooltip .tt-row .tt-key {
+  color: var(--text-dim);
+  display: inline-block;
+  min-width: 70px;
+}
+#tooltip .tt-row .tt-val { color: var(--text); }
+#tooltip .tt-section {
+  margin-top: 4px;
+  padding-top: 4px;
+  border-top: 1px solid var(--border);
+}
+
+/* --- Mobile: hamburger + slide-in sidebar ----------------------------- */
+/* The two chrome elements (hamburger toggle, close button, dim backdrop)
+   live in the DOM at all sizes but are display:none on desktop — the media
+   query below flips them on and turns the sidebar into a fixed overlay. */
+#sidebar-toggle {
+  display: none;
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 12;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  background: rgba(22, 24, 29, 0.92);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  align-items: center;
+  justify-content: center;
+}
+#sidebar-toggle .hamburger,
+#sidebar-toggle .hamburger::before,
+#sidebar-toggle .hamburger::after {
+  display: block;
+  width: 18px;
+  height: 2px;
+  background: var(--text);
+  border-radius: 1px;
+}
+#sidebar-toggle .hamburger {
+  position: relative;
+}
+#sidebar-toggle .hamburger::before,
+#sidebar-toggle .hamburger::after {
+  content: "";
+  position: absolute;
+  left: 0;
+}
+#sidebar-toggle .hamburger::before { top: -6px; }
+#sidebar-toggle .hamburger::after  { top:  6px; }
+
+#sidebar-close {
+  display: none;
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  font-size: 22px;
+  line-height: 1;
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-dim);
+}
+#sidebar-close:hover { color: var(--text); border-color: var(--border); }
+
+#sidebar-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 18;
+}
+#sidebar-backdrop[hidden] { display: none; }
+
+@media (max-width: 720px) {
+  #app {
+    grid-template-columns: 1fr;
+  }
+  #sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: min(86vw, 340px);
+    height: 100dvh;
+    z-index: 20;
+    transform: translateX(-100%);
+    transition: transform 180ms ease-out;
+    box-shadow: 4px 0 16px rgba(0, 0, 0, 0.55);
+    /* Scroll the whole sidebar on mobile instead of relying on the desktop
+       flex split (each section had a fixed/flex share of the viewport, which
+       collapses the levels list to 0px once header + controls + legend +
+       inspector already exceed a phone's height). */
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+  }
+  #sidebar.open { transform: translateX(0); }
+  #sidebar-toggle { display: inline-flex; }
+  #sidebar-close { display: inline-flex; align-items: center; justify-content: center; }
+  /* Keep the header (with its close button) pinned to the top of the scroll
+     so the user can dismiss the panel from anywhere in the list. */
+  #sidebar header {
+    position: sticky;
+    top: 0;
+    background: var(--panel);
+    z-index: 5;
+  }
+  /* Undo the desktop flex sizing — let every section size to its content and
+     let the sidebar itself handle the scrolling. */
+  #sidebar section.levels {
+    flex: none;
+    min-height: 0;
+    display: block;
+  }
+  #components-list {
+    flex: none;
+    overflow: visible;
+    min-height: 0;
+  }
+  .inspector {
+    max-height: none;
+    overflow: visible;
+  }
+  /* Reserve room next to the hamburger so the status bar message doesn't
+     slide under it on narrow screens. */
+  #statusbar { padding-left: 56px; }
+  /* Slightly larger tap targets for the sidebar controls. */
+  .controls button,
+  .controls input[type="text"],
+  .controls select {
+    min-height: 34px;
+  }
+  .controls .row.toggles label {
+    padding: 4px 2px;
+  }
+}

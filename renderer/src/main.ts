@@ -94,6 +94,7 @@ const ui = new Ui({
   onSeedLookup: (n) => loadSeedAct1(n),
   onActLoad: (actNo) => loadAct(actNo),
   onTogglesChanged: () => { void applyToggles(); },
+  onDifficultyChanged: () => { void applyDifficulty(); },
   onVisibilityChanged: (vis) => applyVisibility(vis),
   onResetView: () => fitView(),
   onLevelClick: (lvlNo) => onLevelChosen(lvlNo),
@@ -278,7 +279,7 @@ async function loadSeed(json: SeedJson) {
 }
 
 async function fetchAct(seedNo: number, actNo: number): Promise<SeedJson> {
-  const url = `/api/render?seed=${seedNo}&acts=${actNo}&difficulty=0`;
+  const url = `/api/render?seed=${seedNo}&acts=${actNo}&difficulty=${ui.getDifficulty()}`;
   const res = await fetch(url);
   if (!res.ok) {
     const body = (await res.text()).trim();
@@ -508,6 +509,16 @@ function setActiveLevel(lvlNo: number | null) {
   window.history.replaceState(null, "", url.toString());
 }
 
+// Difficulty change invalidates all loaded acts (the backend keys its cache on
+// (seed, acts, difficulty)). Reset state and re-fetch the act containing the
+// currently focused level so the view stays put.
+async function applyDifficulty() {
+  const url = new URL(window.location.href);
+  url.searchParams.set("difficulty", String(ui.getDifficulty()));
+  window.history.replaceState(null, "", url.toString());
+  if (seed) await loadSeedAct1(seed.seed);
+}
+
 async function applyToggles() {
   // state.* are getters reading the live DOM; the change event fires after
   // the user's click has already flipped the checkbox, so reading here gets
@@ -583,6 +594,15 @@ requestAnimationFrame(frame);
   const raw = params.get("seed") ?? "0";
   const n = Number(raw);
   if (Number.isInteger(n) && n >= 0 && n <= 0xFFFFFFFF) {
+    const rawDiff = params.get("difficulty");
+    if (rawDiff !== null) {
+      const d = Number(rawDiff);
+      if (d === 0 || d === 1 || d === 2) {
+        ui.setDifficulty(d);
+      } else {
+        ui.setStatus(`ignoring invalid ?difficulty=${rawDiff}`);
+      }
+    }
     const rawLevel = params.get("level");
     if (rawLevel !== null) {
       const lvl = Number(rawLevel);

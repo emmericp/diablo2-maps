@@ -28,6 +28,14 @@
             <button id="seed-load-btn" type="button">Load</button>
             <button id="seed-random-btn" type="button" title="Load a random seed">Random</button>
           </div>
+          <div class="row">
+            <label for="difficulty-select">Difficulty</label>
+            <select id="difficulty-select">
+              <option value="0" selected>Normal</option>
+              <option value="1">Nightmare</option>
+              <option value="2">Hell</option>
+            </select>
+          </div>
           <div class="row dev-only">
             <input id="file-input" type="file" accept=".json" hidden />
             <button id="open-btn" type="button">Open .json</button>

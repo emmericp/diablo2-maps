@@ -28,6 +28,7 @@ export interface UiCallbacks {
   onSeedLookup: (seed: number) => void;
   onActLoad: (actNo: number) => void;
   onTogglesChanged: () => void;
+  onDifficultyChanged: () => void;
   onVisibilityChanged: (vis: LegendVisibility) => void;
   onResetView: () => void;
   onLevelClick: (levelNo: number) => void;
@@ -64,6 +65,7 @@ export class Ui {
   private $labels = byId<HTMLInputElement>("labels-toggle");
   // Stripped from the prod HTML (dev-only label), so absent at runtime there.
   private $tells = byIdOrNull<HTMLInputElement>("tells-toggle");
+  private $difficulty = byId<HTMLSelectElement>("difficulty-select");
   private $legend = byId<HTMLElement>("legend");
   private $components = byId<HTMLElement>("components-list");
   private $inspector = byId<HTMLElement>("inspector-body");
@@ -142,6 +144,7 @@ export class Ui {
     this.$rooms.addEventListener("change", onToggle);
     this.$labels.addEventListener("change", onToggle);
     this.$tells?.addEventListener("change", onToggle);
+    this.$difficulty.addEventListener("change", () => this.cb.onDifficultyChanged());
 
     // Drag-and-drop on the canvas host (dev only — drop a seed_*.json).
     if (import.meta.env.DEV) {
@@ -230,6 +233,11 @@ export class Ui {
 
   getVisibility(): LegendVisibility {
     return this.vis;
+  }
+
+  getDifficulty(): number {
+    const n = Number(this.$difficulty.value);
+    return Number.isInteger(n) && n >= 0 && n <= 2 ? n : 0;
   }
 
   setStatus(msg: string) {
@@ -597,6 +605,10 @@ export class Ui {
   // so the user sees what's loaded without having typed it).
   setSeedInputValue(n: number) {
     this.$seedInput.value = String(n >>> 0);
+  }
+
+  setDifficulty(d: number) {
+    if (d === 0 || d === 1 || d === 2) this.$difficulty.value = String(d);
   }
 }
 

@@ -4,6 +4,7 @@ __pycache__
 seedgen/out/
 *.csv
 *.txt
+!**/CMakeLists.txt
 *.bin
 *.d2s
 build
